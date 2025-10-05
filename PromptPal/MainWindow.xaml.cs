@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -29,29 +30,33 @@ namespace PromptPal
         public MainWindow()
         {
             InitializeComponent();
-            _dbService = new DatabaseService();
-            _dbService.InitializeDatabase(); // Assurez-vous que la base de données est prête
 
             // Initialisation de la collection pour la ListBox
             _searchResults = new ObservableCollection<Prompt>();
             ResultsList.ItemsSource = _searchResults;
 
-            // Ajouter quelques prompts de test
-            _dbService.AddPrompt(new Prompt { Title = "Améliorer Image", Content = "Détail, haute résolution, couleurs vibrantes, style cinématographique, lumière douce." });
-            _dbService.AddPrompt(new Prompt { Title = "Brainstorming Idées", Content = "Génère 5 idées originales pour un nouveau produit dans le domaine de la technologie verte, avec une analyse SWOT rapide pour chaque." });
-            _dbService.AddPrompt(new Prompt { Title = "Résumé de texte", Content = "Résume le texte suivant en 3 points clés, en utilisant un langage clair et concis." });
+            // N'exécute le code lié à la base de données que si l'on n'est pas en mode design
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                _dbService = new DatabaseService();
+                _dbService.InitializeDatabase(); // Assurez-vous que la base de données est prête
+
+                // Ajouter quelques prompts de test
+                _dbService.AddPrompt(new Prompt { Title = "Améliorer Image", Content = "Détail, haute résolution, couleurs vibrantes, style cinématographique, lumière douce." });
+                _dbService.AddPrompt(new Prompt { Title = "Brainstorming Idées", Content = "Génère 5 idées originales pour un nouveau produit dans le domaine de la technologie verte, avec une analyse SWOT rapide pour chaque." });
+                _dbService.AddPrompt(new Prompt { Title = "Résumé de texte", Content = "Résume le texte suivant en 3 points clés, en utilisant un langage clair et concis." });
+            }
 
             this.Loaded += MainWindow_Loaded; // Appliquer le flou après le chargement
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // Appliquer l'effet de flou "Acrylic" de Windows 11
-            // Cela est plus complexe et nécessite des appels P/Invoke spécifiques au DWM (Desktop Window Manager).
-            // Voici une version simplifiée, pour un flou complet, vous aurez besoin de plus de code.
-            // Pour un vrai effet Acrylic, des bibliothèques comme MahApps.Metro ou FluentWPF peuvent aider.
-            // Ou manuellement:
-            EnableBlur(this);
+            // N'applique l'effet de flou que si l'on n'est pas en mode design
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                EnableBlur(this);
+            }
         }
 
         // Méthode simplifiée pour activer le flou DWM (nécessite plus de P/Invoke pour être complet)
